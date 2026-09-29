@@ -1,0 +1,12 @@
+{
+  "name": "islebound",
+  "version": "1.0.0",
+  "description": "ISLEBOUND — fall into the Void, rescue Echoes, build your floating island.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes http-server -c-1 -p 8080 .",
+    "balance": "node tools/balance.mjs"
+  },
+  "license": "UNLICENSED"
+}

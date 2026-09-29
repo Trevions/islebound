@@ -1,0 +1,11 @@
+{
+  "name": "Islebound",
+  "short_name": "Islebound",
+  "description": "Fall into the Void, rescue Echoes, rebuild your floating island.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#0b0920",
+  "theme_color": "#0b0920",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

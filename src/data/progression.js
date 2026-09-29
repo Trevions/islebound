@@ -1,0 +1,97 @@
+// Island buildings (the whole permanent-upgrade tree lives on your island),
+// achievements, cosmetics.
+import { upgradeCost } from './balance.js';
+
+export const BUILDING_MAX = 10;
+export const BUILDINGS = {
+  nest:        { icon: '🪺', base: 150, name: { en: 'Echo Nest', bg: 'Гнездо на ехата' },
+    desc: { en: 'Houses rescued Echoes. Each housed Echo grants its bonus.', bg: 'Подслонява спасени Ехота. Всяко дава бонуса си.' },
+    effect: (l) => ({ nestCap: 3 + l * 3 }), fmt: (l) => `${3 + l * 3} 🐾` },
+  anvil:       { icon: '⚒️', base: 220, name: { en: 'Anvil Tree', bg: 'Дърво-наковалня' },
+    desc: { en: 'Permanent damage bonus.', bg: 'Постоянен бонус към щетата.' },
+    effect: (l) => ({ dmg: l * 0.08 }), fmt: (l) => `+${l * 8}% ⚔` },
+  shrine:      { icon: '⛩️', base: 180, name: { en: 'Heart Shrine', bg: 'Храм на сърцето' },
+    desc: { en: 'Permanent max HP.', bg: 'Постоянен максимален живот.' },
+    effect: (l) => ({ hp: l * 12 }), fmt: (l) => `+${l * 12} ♥` },
+  windmill:    { icon: '🌬️', base: 160, name: { en: 'Coin Windmill', bg: 'Монетна мелница' },
+    desc: { en: 'More coins from every dive.', bg: 'Повече монети от всяко спускане.' },
+    effect: (l) => ({ coins: l * 0.07 }), fmt: (l) => `+${l * 7}% ◉` },
+  lighthouse:  { icon: '🗼', base: 170, name: { en: 'Lighthouse', bg: 'Фар' },
+    desc: { en: 'Bigger pickup range; cages glow brighter.', bg: 'По-голям обхват на събиране; клетките светят.' },
+    effect: (l) => ({ pickup: l * 0.1 }), fmt: (l) => `+${l * 10}% ⊕` },
+  garden:      { icon: '🌷', base: 140, name: { en: 'Sky Garden', bg: 'Небесна градина' },
+    desc: { en: 'Grows coins while you are away (up to 12h).', bg: 'Отглежда монети, докато те няма (до 12 ч).' },
+    effect: (l) => ({ garden: l * 25 }), fmt: (l) => `${l * 25} ◉/h` },
+  observatory: { icon: '🔭', base: 260, name: { en: 'Observatory', bg: 'Обсерватория' },
+    desc: { en: 'Crit chance and level-up rerolls.', bg: 'Шанс за крит и нови избори при ниво.' },
+    effect: (l) => ({ crit: l * 0.02, rerolls: Math.floor((l + 2) / 3) }), fmt: (l) => `+${l * 2}% ☘ · ${Math.floor((l + 2) / 3)} ↻` },
+  belltower:   { icon: '🔔', base: 300, name: { en: 'Bell Tower', bg: 'Камбанария' },
+    desc: { en: 'Once per dive, the bell calls you back to life.', bg: 'Веднъж на спускане камбаната те връща към живот.' },
+    effect: (l) => ({ revive: l > 0 ? 0.25 + l * 0.05 : 0 }), fmt: (l) => (l ? `↺ ${25 + l * 5}% ♥` : '—') },
+  kitepost:    { icon: '🪁', base: 150, name: { en: 'Kite Post', bg: 'Хвърчилен стълб' },
+    desc: { en: 'Move faster in every dive.', bg: 'По-бързо движение във всяко спускане.' },
+    effect: (l) => ({ speed: l * 0.03 }), fmt: (l) => `+${l * 3}% ➤` },
+  wellspring:  { icon: '⛲', base: 200, name: { en: 'Wellspring', bg: 'Извор' },
+    desc: { en: 'Slowly regenerate health during dives.', bg: 'Бавно възстановяване на живот.' },
+    effect: (l) => ({ regen: l * 0.12, cd: l * 0.01 }), fmt: (l) => `+${(l * 0.12).toFixed(2)} ✚/s` },
+};
+export const BUILDING_ORDER = ['nest', 'anvil', 'shrine', 'windmill', 'lighthouse', 'kitepost', 'garden', 'observatory', 'wellspring', 'belltower'];
+export const buildingCost = (id, lvl) => upgradeCost(BUILDINGS[id].base, lvl);
+
+// Achievements → gems (gems buy cosmetics only; never power).
+export const ACHIEVEMENTS = [
+  { id: 'first_dive', gems: 5, test: (s) => s.stats.dives >= 1, name: { en: 'First Fall', bg: 'Първо падане' }, desc: { en: 'Complete a dive.', bg: 'Завърши спускане.' } },
+  { id: 'kills_1k', gems: 10, test: (s) => s.stats.kills >= 1000, name: { en: 'Void Sweeper', bg: 'Метач на празнотата' }, desc: { en: 'Defeat 1,000 enemies.', bg: 'Победи 1000 врага.' } },
+  { id: 'kills_10k', gems: 20, test: (s) => s.stats.kills >= 10000, name: { en: 'Void Storm', bg: 'Буря в празнотата' }, desc: { en: 'Defeat 10,000 enemies.', bg: 'Победи 10 000 врага.' } },
+  { id: 'kills_100k', gems: 50, test: (s) => s.stats.kills >= 100000, name: { en: 'Void Ender', bg: 'Краят на празнотата' }, desc: { en: 'Defeat 100,000 enemies.', bg: 'Победи 100 000 врага.' } },
+  { id: 'rescue_1', gems: 5, test: (s) => Object.keys(s.dex).length >= 1, name: { en: 'Friend Found', bg: 'Намерен приятел' }, desc: { en: 'Rescue an Echo.', bg: 'Спаси Ехо.' } },
+  { id: 'rescue_15', gems: 15, test: (s) => Object.keys(s.dex).length >= 15, name: { en: 'Flock', bg: 'Ято' }, desc: { en: 'Discover 15 Echoes.', bg: 'Открий 15 Ехота.' } },
+  { id: 'rescue_30', gems: 25, test: (s) => Object.keys(s.dex).length >= 30, name: { en: 'Menagerie', bg: 'Менажерия' }, desc: { en: 'Discover 30 Echoes.', bg: 'Открий 30 Ехота.' } },
+  { id: 'rescue_60', gems: 100, test: (s) => Object.keys(s.dex).length >= 60, name: { en: 'Every Echo Home', bg: 'Всяко ехо у дома' }, desc: { en: 'Discover all 60 Echoes.', bg: 'Открий всички 60 Ехота.' } },
+  { id: 'legend', gems: 20, test: (s) => s.stats.legendaries >= 1, name: { en: 'Myth Made Real', bg: 'Оживял мит' }, desc: { en: 'Rescue a Legendary Echo.', bg: 'Спаси легендарно Ехо.' } },
+  { id: 'boss_1', gems: 10, test: (s) => s.stats.bosses >= 1, name: { en: 'Guardian Down', bg: 'Паднал пазител' }, desc: { en: 'Defeat a Guardian.', bg: 'Победи пазител.' } },
+  { id: 'boss_12', gems: 40, test: (s) => s.stats.bosses >= 12, name: { en: 'Twelve Crowns', bg: 'Дванайсет корони' }, desc: { en: 'Defeat 12 Guardians.', bg: 'Победи 12 пазители.' } },
+  { id: 'realm_1', gems: 15, test: (s) => s.cleared >= 30, name: { en: 'Meadow Walker', bg: 'Скитник на ливадата' }, desc: { en: 'Clear Meadow Drift.', bg: 'Премини Носещата ливада.' } },
+  { id: 'realm_6', gems: 40, test: (s) => s.cleared >= 180, name: { en: 'Halfway Down', bg: 'На половината път' }, desc: { en: 'Clear six realms.', bg: 'Премини шест свята.' } },
+  { id: 'realm_12', gems: 150, test: (s) => s.cleared >= 360, name: { en: 'The Heart Remembers', bg: 'Сърцето помни' }, desc: { en: 'Clear all 360 stages.', bg: 'Премини всички 360 нива.' } },
+  { id: 'stars_100', gems: 20, test: (s) => s.totalStars >= 100, name: { en: 'Starcatcher', bg: 'Ловец на звезди' }, desc: { en: 'Earn 100 stars.', bg: 'Събери 100 звезди.' } },
+  { id: 'stars_540', gems: 60, test: (s) => s.totalStars >= 540, name: { en: 'Constellation', bg: 'Съзвездие' }, desc: { en: 'Earn 540 stars.', bg: 'Събери 540 звезди.' } },
+  { id: 'stars_1080', gems: 200, test: (s) => s.totalStars >= 1080, name: { en: 'Perfect Sky', bg: 'Съвършено небе' }, desc: { en: 'Earn all 1,080 stars.', bg: 'Събери всички 1080 звезди.' } },
+  { id: 'evo_1', gems: 10, test: (s) => s.stats.evolutions >= 1, name: { en: 'Resonance', bg: 'Резонанс' }, desc: { en: 'Evolve a weapon.', bg: 'Еволюирай оръжие.' } },
+  { id: 'evo_all', gems: 60, test: (s) => Object.keys(s.evosSeen).length >= 12, name: { en: 'Full Chorus', bg: 'Пълен хор' }, desc: { en: 'Discover all 12 Resonances.', bg: 'Открий всичките 12 резонанса.' } },
+  { id: 'lines_1', gems: 5, test: (s) => s.stats.lines >= 1, name: { en: 'Groundbreaker', bg: 'Първа земя' }, desc: { en: 'Clear a line on your island.', bg: 'Изчисти ред на острова.' } },
+  { id: 'tetris', gems: 20, test: (s) => s.stats.quads >= 1, name: { en: 'Four at Once', bg: 'Четири наведнъж' }, desc: { en: 'Clear 4 island lines at once.', bg: 'Изчисти 4 реда наведнъж.' } },
+  { id: 'lands_50', gems: 25, test: (s) => s.island.lands >= 50, name: { en: 'Landmass', bg: 'Суша' }, desc: { en: 'Grow your island to 50 lands.', bg: 'Разшири острова до 50 земи.' } },
+  { id: 'lands_150', gems: 60, test: (s) => s.island.lands >= 150, name: { en: 'Floating Continent', bg: 'Летящ континент' }, desc: { en: 'Grow your island to 150 lands.', bg: 'Разшири острова до 150 земи.' } },
+  { id: 'build_max', gems: 30, test: (s) => Object.values(s.island.buildings).some((l) => l >= 10), name: { en: 'Master Builder', bg: 'Майстор строител' }, desc: { en: 'Max out a building.', bg: 'Максимизирай сграда.' } },
+  { id: 'daily_1', gems: 5, test: (s) => s.daily.played >= 1, name: { en: 'Same Sky', bg: 'Едно небе' }, desc: { en: 'Play a Daily World.', bg: 'Изиграй Дневен свят.' } },
+  { id: 'streak_7', gems: 25, test: (s) => s.daily.bestStreak >= 7, name: { en: 'Week of Falls', bg: 'Седмица падания' }, desc: { en: '7-day daily streak.', bg: '7 поредни дни.' } },
+  { id: 'streak_30', gems: 80, test: (s) => s.daily.bestStreak >= 30, name: { en: 'Month of Falls', bg: 'Месец падания' }, desc: { en: '30-day daily streak.', bg: '30 поредни дни.' } },
+  { id: 'streak_365', gems: 500, test: (s) => s.daily.bestStreak >= 365, name: { en: 'Islebound', bg: 'Островен' }, desc: { en: '365-day daily streak.', bg: '365 поредни дни.' } },
+  { id: 'endless_10', gems: 25, test: (s) => s.endless.best >= 600, name: { en: 'Deep Diver', bg: 'Дълбоко гмуркане' }, desc: { en: 'Survive 10 minutes in the Abyss.', bg: 'Оцелей 10 минути в Бездната.' } },
+  { id: 'endless_30', gems: 80, test: (s) => s.endless.best >= 1800, name: { en: 'Abyss Dweller', bg: 'Обитател на бездната' }, desc: { en: 'Survive 30 minutes in the Abyss.', bg: 'Оцелей 30 минути в Бездната.' } },
+  { id: 'lore_all', gems: 40, test: (s) => Object.keys(s.lore).length >= 36, name: { en: 'The Whole Story', bg: 'Цялата история' }, desc: { en: 'Find all 36 memory stones.', bg: 'Намери всички 36 камъка на паметта.' } },
+  { id: 'nohit', gems: 30, test: (s) => s.stats.flawless >= 1, name: { en: 'Untouched', bg: 'Недокоснат' }, desc: { en: 'Clear a 3-minute stage without being hit.', bg: 'Премини 3-минутно ниво без удар.' } },
+];
+
+export const HATS = [
+  { id: 'none', cost: 0, name: { en: 'Sprout', bg: 'Кълн' } },
+  { id: 'cap', cost: 20, name: { en: 'Explorer Cap', bg: 'Шапка на изследовател' } },
+  { id: 'crown', cost: 60, name: { en: 'Tiny Crown', bg: 'Малка корона' } },
+  { id: 'wizard', cost: 45, name: { en: 'Star Wizard', bg: 'Звезден магьосник' } },
+  { id: 'flower', cost: 25, name: { en: 'Flower Crown', bg: 'Венец' } },
+  { id: 'horns', cost: 50, name: { en: 'Void Horns', bg: 'Рога на празнотата' } },
+  { id: 'halo', cost: 90, name: { en: 'Halo', bg: 'Ореол' } },
+  { id: 'beanie', cost: 30, name: { en: 'Cozy Beanie', bg: 'Уютна шапка' } },
+  { id: 'propeller', cost: 70, name: { en: 'Propeller', bg: 'Перка' } },
+  { id: 'bunny', cost: 40, name: { en: 'Bunny Ears', bg: 'Заешки уши' } },
+];
+export const TRAILS = [
+  { id: 'none', cost: 0, color: null, name: { en: 'None', bg: 'Без' } },
+  { id: 'stardust', cost: 30, color: '#ffe27a', name: { en: 'Stardust', bg: 'Звезден прах' } },
+  { id: 'petal', cost: 30, color: '#ff9fd0', name: { en: 'Petals', bg: 'Листенца' } },
+  { id: 'frost', cost: 40, color: '#bfe9ff', name: { en: 'Frost', bg: 'Скреж' } },
+  { id: 'flame', cost: 50, color: '#ff8a3d', name: { en: 'Flame', bg: 'Пламък' } },
+  { id: 'rainbow', cost: 120, color: 'rainbow', name: { en: 'Rainbow', bg: 'Дъга' } },
+];
+export const SCARVES = ['#ff6b6b', '#ffd166', '#06d6a0', '#4cc9f0', '#b5a1ff', '#ff9fd0', '#ffffff', '#222831'];
