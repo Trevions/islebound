@@ -90,6 +90,7 @@ class App {
   }
   flashHurt() { this.hurtT = 0.25; if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) { /* no-op */ } }
   toast(msg, creature, sub, ms) {
+    if (this.run && this.run.phase === 'play') { this.pill(msg); return; }
     const box = document.getElementById('toasts');
     if (box.children.length > 3) box.firstChild.remove();
     const d = document.createElement('div');
@@ -102,10 +103,18 @@ class App {
     setTimeout(() => d.classList.add('out'), life);
     setTimeout(() => d.remove(), life + 500);
   }
+  // compact one-line hint at the bottom edge; one at a time, never blocks play
+  pill(text) {
+    let el = document.getElementById('pill');
+    if (!el) { el = document.createElement('div'); el.id = 'pill'; document.body.appendChild(el); }
+    el.textContent = text; el.classList.remove('out'); el.classList.add('show');
+    clearTimeout(this.pillT); this.pillT = setTimeout(() => el.classList.add('out'), 4000);
+  }
   tip(type) {
     if (Save.state.showTips === false) return;
     const e = ENEMIES[type]; if (!e) return;
-    this.toast(`New enemy: ${L(e.name)}`, null, e.tip, 7000);
+    const short = e.tip.split(/(?<=[.!])\s/)[0];
+    this.pill(`New: ${L(e.name)} — ${short}`);
   }
   onKey(code) {
     if (this.run && (code === 'Escape' || code === 'KeyP')) {

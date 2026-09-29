@@ -5,8 +5,8 @@
 //  (see docs/BALANCE.md). Change a number → rerun the tool.
 // ─────────────────────────────────────────────────────────────
 
-export const REALM_COUNT = 12;          // one realm per month of the year
-export const STAGES_PER_REALM = 30;     // one stage per day of the month
+export const REALM_COUNT = 12;          // twelve realms
+export const STAGES_PER_REALM = 30;     // thirty stages each
 export const TOTAL_LEVELS = REALM_COUNT * STAGES_PER_REALM; // 360
 export const BOSS_STAGES = [10, 20, 30];
 

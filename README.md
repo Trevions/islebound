@@ -4,7 +4,7 @@
 
 A one-thumb **3D** mobile game for the browser. Slingshot into the Void, survive **30-minute dives** with auto-firing Songs, free caged Echoes, collect coins, chase a high score on the **Top 100**, and bring back pieces of land that you slot into your floating island, Tetris-style.
 
-- **360 stages** in 12 realms (one per month) + **Nightfall** hard mode
+- **360 stages** in 12 realms + **Nightfall** hard mode
 - **12 Guardians** in 3 forms each
 - **12 Songs**, **10 Charms**, **12 Resonances** (evolutions)
 - **60 Echoes** to collect and house on your island

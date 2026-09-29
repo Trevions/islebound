@@ -15,7 +15,7 @@ export const ENEMIES = {
   blinker:   { hp: 20, speed: 40, dmg: 11, r: 13, xp: 'small', ai: 'blink',   shape: 'blinker', tip: "Teleports right next to you every few seconds. Keep an eye on the purple flash.", name: { en: 'Blinkeye', bg: 'Мигач' } },
   healer:    { hp: 22, speed: 38, dmg: 6,  r: 14, xp: 'mid',   ai: 'healer',  shape: 'healer',  tip: "Heals nearby enemies with a green pulse. Kill it first!", name: { en: 'Mender', bg: 'Лечител' } },
   minelayer: { hp: 26, speed: 48, dmg: 8,  r: 15, xp: 'mid',   ai: 'mines',   shape: 'minelayer', tip: "Drops red mines that arm after a moment. Don't walk back over your own path.", name: { en: 'Sowmite', bg: 'Сеяч' } },
-  sprite:    { hp: 60, speed: 120, dmg: 0, r: 12, xp: 'mid', ai: 'flee', shape: 'sprite', tip: "A Coin Sprite! It runs away and vanishes after 15 seconds. Catch it for a pile of coins.", name: { en: 'Coin Sprite' } },
+  sprite:    { hp: 60, speed: 120, dmg: 0, r: 12, xp: 'mid', ai: 'flee', shape: 'sprite', tip: "Catch it within 15 seconds for a pile of coins. It runs away from you.", name: { en: 'Coin Sprite' } },
 };
 
 // Order in which archetypes first appear across the campaign (for the Bestiary)

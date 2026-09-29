@@ -200,7 +200,7 @@ export class Run {
   telegraphLine(x, y, a, len, w, t) { this.teles.push({ line: true, x, y, a, len, w, t, max: t, color: '#ff4d6d' }); }
   later(delay, fn) { if (delay <= 0) fn(); else this.timers.push({ t: delay, fn }); }
   shake(m) { this.shakeMag = Math.max(this.shakeMag, m); this.shakeT = 0.25; }
-  banner(text, sub = '') { this.bannerText = { text, sub, t: 3.2 }; }
+  banner(text, sub = '') { this.bannerText = { text, sub, t: 2.6 }; }
   heal(n) { const P = this.player; P.hp = Math.min(this.stats.maxHp, P.hp + n); }
   hazardHit(x, y, r, dmg) { const P = this.player; if (dist2(x, y, P.x, P.y) < (r + P.r) ** 2) this.hurtPlayer(dmg, x, y); }
   explodeAt(x, y, r, dmg) { this.fx.ring(x, y, r, '#ff8a3d', 0.35, 8); this.fx.burst(x, y, '#ffb070', 14, 220); this.hazardHit(x, y, r, dmg); sfx('boom'); this.shake(5); }
@@ -696,12 +696,13 @@ export class Run {
     }
     if (this.bannerText) {
       const k = this.bannerText.t;
-      ctx.globalAlpha = Math.max(0, Math.min(1, k * 2, (3.2 - k) * 4));
+      ctx.globalAlpha = Math.max(0, Math.min(0.92, k * 2, (2.6 - k) * 4));
       ctx.textAlign = 'center';
-      ctx.font = `800 ${Math.min(26, w / 17)}px 'Grandstander', 'Baloo 2', system-ui`;
-      ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(20,10,30,0.85)'; ctx.strokeText(this.bannerText.text, w / 2, h * 0.33);
-      ctx.fillStyle = '#fff6e8'; ctx.fillText(this.bannerText.text, w / 2, h * 0.33);
-      if (this.bannerText.sub) { ctx.font = "600 15px 'Baloo 2', system-ui"; ctx.lineWidth = 4; this.wrap(ctx, this.bannerText.sub, w / 2, h * 0.33 + 30, Math.min(360, w - 40), 19); }
+      ctx.font = `800 ${Math.min(22, w / 19)}px 'Grandstander', 'Baloo 2', system-ui`;
+      const by = Math.max(200, h * 0.26);
+      ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(20,10,30,0.85)'; ctx.strokeText(this.bannerText.text, w / 2, by);
+      ctx.fillStyle = '#fff6e8'; ctx.fillText(this.bannerText.text, w / 2, by);
+      if (this.bannerText.sub) { ctx.font = "600 13px 'Baloo 2', system-ui"; ctx.lineWidth = 3.5; this.wrap(ctx, this.bannerText.sub, w / 2, by + 24, Math.min(320, w - 60), 16); }
       ctx.globalAlpha = 1;
     }
     if (this.phase === 'launch' && !this.launch.fly && !this.launch.pulling) {

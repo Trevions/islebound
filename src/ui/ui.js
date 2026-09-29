@@ -49,7 +49,7 @@ const TUTORIAL = [
     'Each stage is <b>6 waves of 5 minutes</b>. Every wave has a theme (The Swarm, Heavy Stone, Crossfire…) and gets harder.',
     '<b>Champions</b> (mini-bosses) arrive at 5, 10, 15 and 20 minutes and drop golden chests. On stages 10, 20 and 30 the realm\'s <b>Guardian</b> arrives at 25:00 — defeat it to clear.',
     'Events: <b>Coin Rain</b>, a fleeing <b>Coin Sprite</b>, <b>Echo cages</b> and <b>Memory Stones</b>. Arrows at the screen edge point to them.',
-    'Busy? Tap <b>❚❚ → Save &amp; Quit</b>. The dive is saved and you continue later from the same minute.',
+    'Busy? Tap the <b>pause button → Save &amp; Quit</b>. The dive is saved and you continue later from the same minute.',
   ] },
   { art: '★', title: '5 · Points and stars', body: [
     '<b>Points:</b> every enemy (10–8,000), every coin (5), each rescued Echo (1,000), each Memory Stone (500), 5 per second survived, 2,000 for each wave without getting hit, and a clear bonus.',
@@ -212,10 +212,10 @@ export class UI {
     }
     el.innerHTML = `
       ${this.resumeCard()}
-      <div class="realm-strip" role="tablist">${REALMS.map((R2, i) => `<button class="realm-chip ${i === r ? 'on' : ''} ${this.realmOpen(i) ? '' : 'locked'}" style="--c:${R2.ground}" data-act="realm" data-r="${i}"><b>${R2.month}</b><small>${this.realmOpen(i) ? '' : '🔒'}</small></button>`).join('')}</div>
+      <div class="realm-strip" role="tablist">${REALMS.map((R2, i) => `<button class="realm-chip ${i === r ? 'on' : ''} ${this.realmOpen(i) ? '' : 'locked'}" style="--c:${R2.ground}" data-act="realm" data-r="${i}"><span class="ri">${this.realmOpen(i) ? R2.icon : '🔒'}</span><b>${i + 1}</b><small>${R2.short}</small></button>`).join('')}</div>
       <section class="realm-card" style="--g1:${R.sky[0]};--g2:${R.sky[1]};--acc:${R.accent};--gr:${R.ground}">
         <div class="realm-head">
-          <div><p class="eyebrow">Realm ${r + 1} of 12 · ${R.month}</p><h2>${L(R.name)}</h2><p class="realm-tag">${L(R.tag)}</p></div>
+          <div><p class="eyebrow">Realm ${r + 1} of 12</p><h2>${L(R.name)}</h2><p class="realm-tag">${L(R.tag)}</p></div>
           <div class="realm-stars"><b>${rs}</b><small>/ 90 ★</small></div>
         </div>
         <div class="realm-meta">
@@ -240,6 +240,7 @@ export class UI {
     const mixes = new Set(lv.waves.flatMap((w) => (WAVE_THEMES[w].mix || []).filter((t) => allowed.has(t))));
     const roster = [...new Set([...lv.pool, ...mixes])];
     const fresh = roster.filter((t) => !(S.seenEnemies || {})[t]);
+    this.pending.fresh = fresh;
     const target = lv.target ? Math.round(lv.target * (opts.night ? 1.5 : 1)) : 0;
     const objectives = lv.kind === 'endless'
       ? [['∞', 'Survive as long as you can. No timer, no mercy.'], ['◉', 'Coins and points count even when you fall.']]
@@ -390,7 +391,7 @@ export class UI {
     el.innerHTML = `
       <section class="dex-head"><div><h3>Echodex</h3><p class="sub">${found}/60 discovered · ${Math.min(S.housed.length, mb.nestCap)}/${mb.nestCap} living in your Nest. Every Echo in the Nest gives its bonus in every dive. Tap one to move it in or out; upgrade the Echo Nest for more room.</p></div></section>
       ${REALMS.map((R, ri) => `
-        <section class="dex-realm"><p class="eyebrow" style="color:${R.accent}">${R.month} · ${L(R.name)}</p>
+        <section class="dex-realm"><p class="eyebrow" style="color:${R.accent}">${R.icon} ${L(R.name)}</p>
           <div class="dex-grid">${CREATURES.filter((c) => c.realm === ri).map((c) => {
             const has = S.dex[c.id];
             const housed = S.housed.includes(c.id);
@@ -457,7 +458,7 @@ export class UI {
       </section>
       <section class="panel"><h3>Memory Stones <small>${Object.keys(S.lore).length}/36</small></h3>
         <p class="sub">Glowing stones appear during dives. Each tells a piece of the story.</p>
-        <div class="lore">${LORE.map((l, i) => S.lore[i] ? `<blockquote><small>${REALMS[Math.floor(i / 3)].month}</small>${esc(L(l))}</blockquote>` : `<blockquote class="missing"><small>${REALMS[Math.floor(i / 3)].month}</small>Not found yet · look for it in ${L(REALMS[Math.floor(i / 3)].name)}</blockquote>`).join('')}</div>
+        <div class="lore">${LORE.map((l, i) => S.lore[i] ? `<blockquote><small>${L(REALMS[Math.floor(i / 3)].name)}</small>${esc(L(l))}</blockquote>` : `<blockquote class="missing"><small>${L(REALMS[Math.floor(i / 3)].name)}</small>Not found yet · look for it in ${L(REALMS[Math.floor(i / 3)].name)}</blockquote>`).join('')}</div>
       </section>
       <section class="panel"><h3>Stats</h3>
         <div class="stats">
@@ -528,7 +529,7 @@ export class UI {
       <div class="hud" id="hud">
         <div class="hud-top">
           <div class="hud-time"><b id="h-time">30:00</b><div class="hud-wave"><small id="h-wave">Get ready</small><div class="bar"><i id="h-prog"></i></div></div></div>
-          <button class="pause" data-act="pause" aria-label="Pause">❚❚</button>
+          <button class="pause" data-act="pause" aria-label="Pause"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="currentColor"/></svg></button>
         </div>
         <div class="hud-hp"><div class="bar hp"><i id="h-hp"></i><span id="h-hpt"></span></div></div>
         <div class="hud-xp"><span id="h-lvl" title="Level">1</span><div class="bar xp"><i id="h-xp"></i></div></div>
@@ -690,7 +691,7 @@ export class UI {
       case 'prep': this.prep(+d.s); break;
       case 'song': this.pending.weapon = d.id; this.cur.querySelectorAll('.song').forEach((b) => b.classList.toggle('on', b.dataset.id === d.id)); break;
       case 'close': this.closeModal(); break;
-      case 'launch': { const p = this.pending; S.lastWeapon = p.weapon; this.closeModal(); if (S.activeRun) S.activeRun = null; app.startRun(p.lv, { ...p.opts, weapon: p.weapon }); break; }
+      case 'launch': { const p = this.pending; S.lastWeapon = p.weapon; if (S.showBriefing !== false && p.fresh) { S.seenEnemies = S.seenEnemies || {}; p.fresh.forEach((t) => (S.seenEnemies[t] = true)); } this.closeModal(); if (S.activeRun) S.activeRun = null; app.startRun(p.lv, { ...p.opts, weapon: p.weapon }); break; }
       case 'resume-run': app.resumeRun(); break;
       case 'discard-run': S.activeRun = null; Save.save(); this.hub(this.tab); break;
       case 'daily': this.openLevel(getDaily(), {}); break;

@@ -403,7 +403,9 @@ export class Renderer3D {
 
     // launch island & slingshot
     const launching = run.phase === 'launch';
-    this.isle.visible = launching || Math.hypot(cx, cz) < 900;
+    const fall = launching ? 0 : Math.min(run.time, 4);
+    this.isle.position.y = -fall * fall * 30;
+    this.isle.visible = fall < 4;
     this.band.visible = launching && !run.launch.fly;
     this.nestRing.visible = launching;
     this.nestRing.position.set(run.nest.x, 1, run.nest.y);

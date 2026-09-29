@@ -347,3 +347,9 @@ table.pts td:last-child { text-align: right; font-weight: 800; font-variant-nume
 @media (max-width: 380px) { .tabbtn span { font-size: 1.15rem; } .tabbtn small { font-size: .58rem; } }
 
 body.in-run #toasts { top: calc(178px + env(safe-area-inset-top, 0px)); }
+
+#pill { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); max-width: min(92vw, 460px); padding: 7px 14px; border-radius: 999px; background: rgba(11,9,32,.72); color: var(--ink); font-size: .8rem; font-weight: 700; line-height: 1.3; text-align: center; pointer-events: none; opacity: 0; transition: opacity .3s, transform .3s; z-index: 6; backdrop-filter: blur(6px); }
+#pill.show { opacity: 1; transform: translate(-50%, 0); } #pill.out { opacity: 0; transform: translate(-50%, 10px); }
+body:not(.in-run) #pill { display: none; }
+.pause { display: grid; place-items: center; color: var(--ink); }
+.realm-chip { min-width: 58px; gap: 1px; } .realm-chip .ri { font-size: 1rem; line-height: 1.1; } .realm-chip b { font-size: .85rem; } .realm-chip small { font-size: .62rem; height: auto; font-weight: 700; }
