@@ -54,7 +54,7 @@ const S = {
   },
 };
 
-export const lang = () => Save.state.lang || 'en';
+export const lang = () => 'en'; // the game ships in English
 export function t(key, vars) {
   let s = (S[lang()] && S[lang()][key]) || S.en[key] || key;
   if (vars) for (const k in vars) s = s.replace(`{${k}}`, vars[k]);

@@ -50,6 +50,15 @@ export function updateEnemy(run, e, dt) {
       } else if (d < 46) e.fuse = 0.55;
       break;
     }
+    case 'flee': {
+      tx = -ux + Math.sin(e.t * 2 + e.seed) * 0.6; ty = -uy + Math.cos(e.t * 2 + e.seed) * 0.6;
+      const n = Math.hypot(tx, ty) || 1; tx /= n; ty /= n;
+      if (d > 420) sp *= 0.35;
+      e.life = (e.life ?? 15) - dt;
+      if (e.life <= 0) { e.dead = true; e.escaped = true; run.fx.burst(e.x, e.y, '#ffd166', 16); }
+      e.noSep = true;
+      break;
+    }
     case 'shield': e.shieldA = Math.atan2(dy, dx); break;
     case 'orbit': {
       e.orbR = e.orbR ?? 220;
